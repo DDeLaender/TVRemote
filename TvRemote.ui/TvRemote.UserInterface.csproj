@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="remote.jpg" />
+    <None Remove="TV.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TVRemote\TVRemote.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="remote.jpg" />
+    <Resource Include="TV.jpg" />
+  </ItemGroup>
+
+</Project>
