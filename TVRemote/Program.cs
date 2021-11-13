@@ -1,4 +1,5 @@
 ﻿using TVRemote.models;
+using TVRemote.repositories;
 using System.Threading;
 
 namespace TVRemote
@@ -7,6 +8,13 @@ namespace TVRemote
     {
         static void Main(string[] args)
         {
+            var registryRepository = new RegistryRepository();
+            bool validateRepositoryExists =registryRepository.ValidateRepositoryExists();
+            if (!validateRepositoryExists)
+            {
+                registryRepository.CreateRepository();
+            }
+
             var tv = new Tv();
             var remote = new Remote(tv);
             remote.PressButton(ButtonName.Power);
@@ -36,7 +44,7 @@ namespace TVRemote
             remote.PressButton(ButtonName.Nine);
             Thread.Sleep(4000);
             remote.PressButton(ButtonName.Six);
-            
+           
 
         }
     }

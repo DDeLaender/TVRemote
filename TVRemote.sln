@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TVRemote", "TVRemote\TVRemo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TvRemote.UnitTests", "TvRemoteTests\TvRemote.UnitTests.csproj", "{38D9B802-40E3-4E61-95C9-98C127E53F62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvRemote.UserInterface", "TvRemote.ui\TvRemote.UserInterface.csproj", "{89D0ED0C-95A3-4A63-B612-07EA462C8B0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TvRemote.UserInterface", "TvRemote.ui\TvRemote.UserInterface.csproj", "{89D0ED0C-95A3-4A63-B612-07EA462C8B0E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5C6CC391-3CD3-45EA-B2AA-FFCE1F7739AC}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

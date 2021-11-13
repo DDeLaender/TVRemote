@@ -12,6 +12,18 @@ namespace TVRemote.models
         private List<Button> NumberHistory { get; set; }
         private int ExpectedCount { get; set; }
         private int WaitTime { get; set; }
+        private int ChannelNumber
+        {
+            get
+            {
+                string channelNumber = "";
+                foreach (Button numberButton in NumberHistory)
+                {
+                    channelNumber += numberButton.Name.ToString("D");
+                }
+                return Int32.Parse(channelNumber);
+            }
+        }
 
         // constructor
         public NumberHistoryChecker(List<Button> numberHistory, Tv tvSelected, int expectedCount, int waitTime)
@@ -23,20 +35,6 @@ namespace TVRemote.models
         }
 
         //methods
-
-        private int ChannelNumber 
-        { 
-            get 
-            {
-                string channelNumber ="";
-                foreach (Button numberButton in NumberHistory)
-                {
-                    channelNumber += numberButton.Name.ToString("D");
-                }
-                return Int32.Parse(channelNumber);
-            } 
-        }
-
         public void ThreadProc()
         {
             Thread.Sleep(WaitTime); // 3 sec in milliseconds
@@ -81,7 +79,7 @@ namespace TVRemote.models
         public Remote(Tv tv)
         {
             TvSelected = tv;
-            WaitTime = 3000;
+            WaitTime = 3000; // 3 sec
         }
 
         //methods
