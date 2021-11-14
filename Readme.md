@@ -28,7 +28,7 @@ Hieruit kunnen we afleiden dat de gebruiker klaar is met de ingave.
 
 - TvSelected = de tv waarvoor het kanaal geselecteerd zal worden
 - NumberHistory = de historiek van alle buttons die ingegeven zijn
-- ExpectedCount = de hoeveel numberbuttons die we verwachten binnen n-seconden.
+- ExpectedCount = het aantal numberbuttons dat we verwachten binnen n-seconden.
 - WaitTime = de n-seconden
 - ChannelNumber = het nummer waar naar genavigeerd moet worden
 
@@ -56,14 +56,14 @@ de button objecten.
 
 - TvSelected = de tv waaraan de remote gekoppeld is
 - NumberHistory = lijst met alle reeds ingevoerde knoppen
-- AllThreads = lijst met de verschillende lopende thread die controleren
+- AllThreads = lijst met de verschillende lopende threads die controleren
 of er extra knoppen ingevoerd worden.
 - WaitTime = de n-seconden waarbinnen men kijkt of er extra knoppen ingegeven zijn
 voor de threads
 
 **methods :**
 
-RunningThreadCount → Gaat na hoeveel thread er lopende zijn
+RunningThreadCount → Gaat na hoeveel threads er lopende zijn
 
 PressButton → zorgt ervoor dat de juiste actie uitgevoerd wordt bij elke knop dat je induwt
 
@@ -71,8 +71,8 @@ PressButton → zorgt ervoor dat de juiste actie uitgevoerd wordt bij elke knop 
 
 **fields :**
 
-- powerd = tv staat uit om te beginnen
-- currentVolume = houdt de volume bij
+- powered = tv staat uit om te beginnen
+- currentVolume = houdt het volume bij
 - currentChannel = houdt het kanaal bij
 - minVolume = laagste volumeniveau
 - maxVolume = hoogst volumeniveau
@@ -83,7 +83,7 @@ PressButton → zorgt ervoor dat de juiste actie uitgevoerd wordt bij elke knop 
 **properties :**
 
 - messages = haalt alle openstaande boodschappen op of zet een nieuwe boodschap in de lijst
-- powerd = zet de tv aan of uit. Als de tv aan gaat worden de default volume gezet
+- powered = zet de tv aan of uit. Als de tv aan gaat worden het default volume gezet
 - currentVolume = zet of haalt het huidig volume op
 - currentChannel = zet of haalt het huidig kanaal op
 
