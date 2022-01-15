@@ -1,51 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using TVRemote.repositories;
+using TVRemote.Configuration;
+using TvRemote.FakeRepositories;
 
 namespace TVRemote.models
-{
-    class NumberHistoryChecker
-    {
-
-        //properties
-        private Tv TvSelected { get; set; }
-        private List<Button> NumberHistory { get; set; }
-        private int ExpectedCount { get; set; }
-        private int WaitTime { get; set; }
-        private int ChannelNumber
-        {
-            get
-            {
-                string channelNumber = "";
-                foreach (Button numberButton in NumberHistory)
-                {
-                    channelNumber += numberButton.Name.ToString("D");
-                }
-                return Int32.Parse(channelNumber);
-            }
-        }
-
-        // constructor
-        public NumberHistoryChecker(List<Button> numberHistory, Tv tvSelected, int expectedCount, int waitTime)
-        {
-            NumberHistory = numberHistory;
-            TvSelected = tvSelected;
-            ExpectedCount = expectedCount;
-            WaitTime = waitTime;
-        }
-
-        //methods
-        public void ThreadProc()
-        {
-            Thread.Sleep(WaitTime); // 3 sec in milliseconds
-            
-            if (NumberHistory.Count == ExpectedCount)
-            {
-                TvSelected.GoToChannel(ChannelNumber);
-                NumberHistory.Clear();
-            }
-        }
-    }
+{ 
     public class Remote
     {
         //field
@@ -67,39 +27,36 @@ namespace TVRemote.models
             {ButtonName.Eight, new Button (ButtonName.Eight, ButtonType.Number)},
             {ButtonName.Nine, new Button (ButtonName.Nine, ButtonType.Number)}
         };
+        public dynamic Registry 
+        {
+            get 
+            { 
+                if(Configuration.Configuration.mode == Mode.Production)
+                {
+                    return new RegistryRepository();
+                }
+                else
+                {
+                    return new FakeRegistryRepository();
+                }
+            }
+        }
 
         //properties
         public Tv TvSelected { get; set; }
-        private List<Button> NumberHistory = new List<Button> { };
-        private List<Thread> AllThreads = new List<Thread> { };
-        public int WaitTime { get; set; }
-
+        
 
         //constructor
         public Remote(Tv tv)
         {
             TvSelected = tv;
-            WaitTime = 3000; // 3 sec
         }
 
         //methods
-
-        private int RunningThreadCount()
-        {
-            int threadCount = 0;
-            foreach (Thread thread in AllThreads)
-            {
-                if (thread.IsAlive)
-                {
-                    threadCount += 1;
-                }
-            }
-            return threadCount;
-        }
-
         public void PressButton(ButtonName buttonName)
         {
             var button = _buttons[buttonName];
+            int[] subset;
 
             button.Press();
 
@@ -113,13 +70,7 @@ namespace TVRemote.models
             {
                 return;
             }
-           
-            if (RunningThreadCount() >0 && button.Type != ButtonType.Number)
-            {
-                Console.WriteLine("Evaluating previous number input. You are unable to press any buttons except number buttons.");
-                return;
-            }
-
+            
             switch (button.Type)
             {
                 case ButtonType.Volume:
@@ -143,45 +94,20 @@ namespace TVRemote.models
                     }
                     break;
                 case ButtonType.Number:
-
-                    NumberHistory.Add(button);
-
-                    if (NumberHistory.Count > 3)
+                    List<int> numbers = Registry.NumbersClicked();
+                    
+                    if ( numbers.Count >=3)
                     {
-                        TvSelected.GoToChannel(999);
-                        NumberHistory.Clear();
-                    }
-                    else if (NumberHistory.Count == 1)
-                    {
-                        var numberHistoryChecker = new NumberHistoryChecker(NumberHistory, TvSelected, 1,WaitTime);
-                        var thread1 = new Thread(new ThreadStart(numberHistoryChecker.ThreadProc));
-                        thread1.Name = "ThreadOne";
-                        thread1.Start();
-                        AllThreads.Add(thread1);
-
-                    }
-                    else if (NumberHistory.Count == 2)
-                    {
-                        var numberHistoryChecker = new NumberHistoryChecker(NumberHistory, TvSelected, 2, WaitTime);
-                        var thread2 = new Thread(new ThreadStart(numberHistoryChecker.ThreadProc));
-                        thread2.Name = "ThreadTwo";
-                        thread2.Start();
-                        AllThreads.Add(thread2);
-
+                        subset = numbers.GetRange(0, 3).ToArray();
                     }
                     else
                     {
-                        var numberHistoryChecker = new NumberHistoryChecker(NumberHistory, TvSelected, 3, WaitTime);
-                        var thread3 = new Thread(new ThreadStart(numberHistoryChecker.ThreadProc));
-                        thread3.Name = "ThreadThree";
-                        thread3.Start();
-                        AllThreads.Add(thread3);
+                        subset = numbers.GetRange(0, numbers.Count).ToArray();
                     }
+                    TvSelected.GoToChannel(Int32.Parse(string.Join("", subset)));
                     break;
                 default:
                     break;
-
-
             }
         }
     }

@@ -1,12 +1,12 @@
 ﻿
 namespace TVRemote.models
 {
-    enum ButtonType
+    public enum ButtonType
     {
-        Volume,
-        Power,
-        Channel,
-        Number 
+        Volume = 0,
+        Power = 1,
+        Channel = 2,
+        Number = 3  
     }
     public enum ButtonName
     {

@@ -8,13 +8,6 @@ namespace TVRemote
     {
         static void Main(string[] args)
         {
-            var registryRepository = new RegistryRepository();
-            bool validateRepositoryExists =registryRepository.ValidateRepositoryExists();
-            if (!validateRepositoryExists)
-            {
-                registryRepository.CreateRepository();
-            }
-
             var tv = new Tv();
             var remote = new Remote(tv);
             remote.PressButton(ButtonName.Power);
