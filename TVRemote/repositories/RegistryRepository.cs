@@ -2,53 +2,24 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Threading;
+using TVRemote.models;
 
 namespace TVRemote.repositories
 {
     //RegistryRepository logs button clicks
-    class RegistryRepository
+    public class RegistryRepository : BaseRepository
     {
-        // properties
-        const string _connectionStringTvRemote = "Data source=localhost; Initial Catalog=TvRemote; User ID=sa; Password=123456789";
-        const string _connectionStringMaster = "Data source=localhost; Initial Catalog=master; User ID=sa; Password=123456789";
-
-        //methods
-        // validates if the repository exists
-        public bool ValidateRepositoryExists()
+        public override string TableName
         {
-            string sql = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES " +
-                         "WHERE TABLE_SCHEMA = 'dbo' " +
-                         "AND TABLE_NAME='registry'";
-            int count;
-            using (var connection = new SqlConnection(_connectionStringTvRemote))
-            using (var command = new SqlCommand (sql, connection))
+            get
             {
-                try
-                {
-                    connection.Open();
-                }
-                catch (SqlException e)
-                {
-                    return false;
-                }
-                var reader = command.ExecuteReader();
-                reader.Read();
-                var record = (IDataRecord)reader;  //typecast reader to record 
-                count = record.GetInt32(0);
-            }
-            if (count == 0)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
+                return "registry";
             }
         }
+
         // creating the registry table
-        public void CreateRepository()
+        public override void CreateRepository()
         {
             string sql = "CREATE DATABASE TvRemote ";
             using (var connection = new SqlConnection(_connectionStringMaster))
@@ -61,7 +32,7 @@ namespace TVRemote.repositories
 
             Thread.Sleep(5000); //necessary because it takes time to make a database. db must exist before you can make a table...
 
-            sql = "CREATE TABLE Registry(ButtonName varchar(50), TimeClicked datetime)";
+            sql = "CREATE TABLE Registry(Id int identity(1,1) primary key,ButtonType int, ButtonName int, TimeClicked datetime DEFAULT(getdate()))"; //timeclicked runns automatically 
             using (var connection = new SqlConnection(_connectionStringTvRemote))
             using (var command = new SqlCommand(sql, connection))
             {
@@ -72,15 +43,44 @@ namespace TVRemote.repositories
 
 
         // register a button click to the table
-        public void RegisterButtonClick()
+        public void RegisterButtonClick(ButtonType buttonType, ButtonName buttonName)
         {
+            string sql = @"INSERT INTO Registry(ButtonType, ButtonName) 
+                         VALUES (@ButtonType, @ButtonName)";
 
+            using (var connection = new SqlConnection(_connectionStringTvRemote))
+            using (var command = new SqlCommand(sql, connection))
+            {
+                connection.Open();
+                command.Parameters.AddWithValue("@ButtonType", (int)buttonType);
+                command.Parameters.AddWithValue("@ButtonName", (int)buttonName);
+                command.ExecuteReader();
+            }
         }
-
-        // gets time in msec since last click
-        public void GetTimeSinceLastClick()
+        public List<int> NumbersClicked()
         {
-
+            string sql = @"
+                WITH numbers AS ( 
+	                SELECT * 
+	                FROM Registry 
+	                WHERE ButtonType = 3 AND DATEDIFF_BIG(MILLISECOND, TimeClicked, CURRENT_TIMESTAMP) <= 3000
+                )
+                SELECT ButtonName as NumbersClicked
+                FROM numbers;";
+            using(var connection = new SqlConnection(_connectionStringTvRemote))
+            using(var command = new SqlCommand (sql, connection))
+            {
+                connection.Open();
+                var reader = command.ExecuteReader();
+                connection.Close();
+                List<int> numbers = new List<int>();
+                while (reader.Read())
+                {
+                    var number = reader.GetInt32(reader.GetOrdinal("NumbersClicked"));
+                    numbers.Add(number);
+                }
+                return numbers;
+            }
         }
     }
 }

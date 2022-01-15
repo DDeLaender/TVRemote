@@ -1,4 +1,7 @@
 ﻿using System;
+using TVRemote.repositories;
+using TVRemote.Configuration;
+using TvRemote.FakeRepositories;
 
 namespace TVRemote.models
 {
@@ -8,7 +11,20 @@ namespace TVRemote.models
 
         public ButtonType Type { get; set; }
 
-        public DateTime PressTime { get; set; }
+        public dynamic Registry
+        {
+            get
+            {
+                if (Configuration.Configuration.mode == Mode.Production)
+                {
+                    return new RegistryRepository();
+                }
+                else
+                {
+                    return new FakeRegistryRepository();
+                }
+            }
+        }
 
         public Button (ButtonName name, ButtonType type)
         {
@@ -18,7 +34,8 @@ namespace TVRemote.models
 
         public void Press()
         {
-            PressTime = DateTime.Now;
+            Console.WriteLine("Registering Button Click");
+            Registry.RegisterButtonClick(Type, Name);
         }
     }
 }
